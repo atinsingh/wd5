@@ -2,13 +2,23 @@ package testcases;
 
 import config.Config;
 import drivermanager.DriverManager;
+import listeners.ScreenshotListenter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import utils.Utils;
 
+import javax.rmi.CORBA.Util;
+import javax.swing.text.Utilities;
+import java.io.IOException;
 import java.util.Date;
 
+@Listeners(ScreenshotListenter.class)
 public class HomeTest {
 
     private static Logger logger = LogManager.getLogger(HomeTest.class);
@@ -23,10 +33,15 @@ public class HomeTest {
     }
 
     @Test
-    public void testBroswerProperty() throws InterruptedException {
-        DriverManager.getDriver().get(Config.getProperty("app.url"));
+    public void testBroswerProperty() throws InterruptedException, IOException {
+        WebDriver driver = DriverManager.getDriver();
+        driver.get(Config.getProperty("app.url"));
+        Assert.assertEquals(driver.getTitle(), "Facebook");
         Thread.sleep(5000);
-        DriverManager.getDriver().quit();
     }
 
+    @AfterSuite
+    public void tearDown() {
+        DriverManager.getDriver().quit();
+    }
 }
