@@ -5,7 +5,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
-import java.awt.dnd.DragGestureEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,7 +51,7 @@ public class Utils {
             createDirs(Paths.get(Config.getProperty("fail.dir")));
         }
 
-        File screenShot =   getStringShot(driver);
+        File screenShot =   getScreenShot(driver);
         String fileName = getScreenShotFileName(testName);
         Path path;
         if(pass){
@@ -64,7 +63,7 @@ public class Utils {
         return fileName;
     }
 
-    private static File getStringShot(WebDriver driver){
+    private static File getScreenShot(WebDriver driver){
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
     }
 
