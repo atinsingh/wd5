@@ -1,56 +1,72 @@
 package testcases;
 
 import config.Config;
+import data.ExcelDataManager;
 import drivermanager.DriverManager;
 import listeners.ScreenshotListenter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.Listeners;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+import pages.ContactSalesPage;
 import pages.DataSciencePage;
+import pages.MainNavBar;
 import pages.TopNavBar;
 import utils.Utils;
 
-import javax.rmi.CORBA.Util;
-import javax.swing.text.Utilities;
-import java.io.IOException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+
 
 @Listeners(ScreenshotListenter.class)
 public class HomeTest {
 
     private static Logger logger = LogManager.getLogger(HomeTest.class);
     WebDriver driver = DriverManager.getDriver();
+    MainNavBar mainNavBar;
+    ContactSalesPage salesPage;
 
-    @Test
-    public void dummyTest() {
-        logger.fatal("Here is I am with {} FATAL ", "Ayush");
-        logger.info("Here is I am with {} INFO ", "Ayush");
-        logger.error("Here is I am with {} ERROR ", "Ayush");
-        logger.debug("Here is I am with {} DEBUG ", "Ayush");
-        logger.trace("Here is I am with {} DEBUG ", "Ayush");
+
+    @BeforeSuite
+    public void setUp() {
+        driver.get(Config.getProperty("app.url"));
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("truste-consent-button"))).click();
+
     }
 
-    @Test
-    public void testBroswerProperty() throws InterruptedException, IOException {
-
-        driver.get(Config.getProperty("app.url"));
-        Assert.assertEquals(driver.getTitle(), "Facebook");
-        Thread.sleep(5000);
+    @Test(enabled = false)
+    public void testMeetingChat() {
+        mainNavBar = new MainNavBar(driver);
+        mainNavBar.clickOnMeeting();
+        Assert.assertEquals(driver.getTitle(), "Zoom Meetings - Zoom");
     }
 
-    @Test
-    public void testDataScienceH2() {
-        driver.get(Config.getProperty("app.url"));
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        TopNavBar navBar = new TopNavBar(driver);
-       DataSciencePage sciencePage =  navBar.clickDataScience();
-       Assert.assertEquals(sciencePage.getH2text(), "Now KickStart ");
+    @Test(dataProvider = "contactProvider2", dataProviderClass = ExcelDataManager.class)
+    public void checkContactSales(String email, String company, String firstName, String lastname){
+        mainNavBar = new MainNavBar(driver);
+        salesPage = mainNavBar.clickOnContantSales();
+        salesPage
+                .keyInEmail(email)
+                .keyInCompanyName(company)
+                .keyFirstName(firstName)
+                .keyLastName(lastname);
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test(dataProvider = "dummy", dataProviderClass = ExcelDataManager.class)
+    public void testDummy(Object ...args) {
+        for (Object ob: args){
+            System.out.println(ob);
+        }
     }
 
     @AfterSuite
