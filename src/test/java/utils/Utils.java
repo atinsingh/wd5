@@ -22,7 +22,7 @@ public class Utils {
      */
     private static void createDirs(Path path) throws IOException {
         if(Files.exists(path)) {
-            System.out.println("Directory already exists");
+            //System.out.println("Directory already exists");
             return;
         }
         Files.createDirectories(path);
@@ -65,6 +65,11 @@ public class Utils {
 
     private static File getScreenShot(WebDriver driver){
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+    }
+
+    public static String reportFile() throws IOException {
+        createDirs(Paths.get("target/reports"));
+        return Paths.get("target/reports", "TestReport_"+ getTimeStampWithFormat() +".html").toString();
     }
 
 
